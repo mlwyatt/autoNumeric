@@ -1266,8 +1266,14 @@ export default class AutoNumeric {
                 // If not, add the counter
                 this._initializeFormCounterToOne();
                 // And add the submit and reset event listeners
-                this.parentForm.addEventListener('submit', this._onFormSubmitFunc, false);
-                this.parentForm.addEventListener('reset', this._onFormResetFunc, false);
+                if (typeof window.$ === 'function' && window.$.fn && window.$.fn.jquery && typeof window.$.fn.jquery === 'string') {
+                    $(this.parentForm).on('submit',this._onFormSubmitFunc);
+                    $(this.parentForm).on('reset',this._onFormResetFunct);
+                }
+                else {
+                    this.parentForm.addEventListener('submit', this._onFormSubmitFunc, false);
+                    this.parentForm.addEventListener('reset', this._onFormResetFunc, false);
+                }
                 // Also keep a reference to the handler function so that we can remove it later
                 this._storeFormHandlerFunction();
             }
