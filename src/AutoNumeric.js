@@ -5762,7 +5762,7 @@ To solve that, you'd need to either set \`decimalPlacesRawValue\` to \`null\`, o
 
         //TODO Divide this function to make it easier to understand
         inputValue = (inputValue === '') ? '0' : inputValue.toString();
-        inputValue = _scientificToDecimal(inputValue);
+        inputValue = AutoNumeric._scientificToDecimal(inputValue);
         if (settings.roundingMethod === AutoNumeric.options.roundingMethod.toNearest05 ||
             settings.roundingMethod === AutoNumeric.options.roundingMethod.toNearest05Alt ||
             settings.roundingMethod === AutoNumeric.options.roundingMethod.upToNext05 ||
