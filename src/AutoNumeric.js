@@ -1180,17 +1180,16 @@ export default class AutoNumeric {
         this._onFocusInFunc = e => { this._onFocusIn(e); };
         this._onFocusInAndMouseEnterFunc = e => { this._onFocusInAndMouseEnter(e); };
         this._onFocusFunc = () => { this._onFocus(); };
-        this._onKeydownFunc  = e => { this._onKeydown(e);  this._preSanitize(e);};
-        this._onKeypressFunc = e => { this._onKeypress(e); this._preSanitize(e);};
-        this._onKeyupFunc    = e => { this._onKeyup(e);    this._preSanitize(e);};
-        this._onFocusOutAndMouseLeaveFunc = e => { this._onFocusOutAndMouseLeave(e); this._preSanitizeFunc(e);};
+        this._onKeydownFunc  = e => { this._onKeydown(e);  this._onSanitizeFunc(e);};
+        this._onKeypressFunc = e => { this._onKeypress(e); this._onSanitizeFunc(e);};
+        this._onKeyupFunc    = e => { this._onKeyup(e);    this._onSanitizeFunc(e);};
+        this._onFocusOutAndMouseLeaveFunc = e => { this._onFocusOutAndMouseLeave(e); this._onSanitizeFunc(e);};
         this._onPasteFunc = e => { this._onPaste(e); };
         this._onWheelFunc = e => { this._onWheel(e); };
         this._onDropFunc = e => { this._onDrop(e); };
         this._onKeydownGlobalFunc = e => { this._onKeydownGlobal(e); };
         this._onKeyupGlobalFunc = e => { this._onKeyupGlobal(e); };
         this._onSanitizeFunc = e => { this._onSanitize(e); };
-        this._preSanitizeFunc = e => { this._preSanitize(e); };
 
         // Add the event listeners
         this.domElement.addEventListener('focusin', this._onFocusInFunc, false);
@@ -7517,19 +7516,10 @@ To solve that, you'd need to either set \`decimalPlacesRawValue\` to \`null\`, o
     /**
      * Sanitize the value to the hidden field
      *
-     * @param {Event} e The `sanitizeAutoNumeric` event
+     * @param {Event} e The event
      */
     _onSanitize(e) {
         this.hiddenDomElement.value = this.rawValue;
-    }
-
-    /**
-     * Sanitize the value to the hidden field
-     *
-     * @param {Event} e The `keyup`, `blur`, `focusout`, `change` event
-     */
-    _preSanitize(e) {
-        this.domElement.dispatchEvent(new CustomEvent('sanitizeAutoNumeric'));
     }
 
     /**
