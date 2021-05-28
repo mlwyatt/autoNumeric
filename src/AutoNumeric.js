@@ -1181,6 +1181,7 @@ export default class AutoNumeric {
         this._onKeydownGlobalFunc = e => { this._onKeydownGlobal(e); };
         this._onKeyupGlobalFunc = e => { this._onKeyupGlobal(e); };
         this._onSanitizeFunc = e => { this._onSanitize(e); };
+        this._preSanitizeFunc = e => { this._preSanitize(e); };
 
         // Add the event listeners
         this.domElement.addEventListener('focusin', this._onFocusInFunc, false);
@@ -1196,6 +1197,10 @@ export default class AutoNumeric {
         // this.domElement.addEventListener('wheel', this._onWheelFunc, false);
         this.domElement.addEventListener('drop', this._onDropFunc, false);
         this.domElement.addEventListener('sanitizeAutoNumeric',this._onSanitizeFunc,false);
+        this.domElement.addEventListener('keyup',this._preSanitizeFunc,false);
+        this.domElement.addEventListener('blur',this._preSanitizeFunc,false);
+        this.domElement.addEventListener('focusout',this._preSanitizeFunc,false);
+        this.domElement.addEventListener('change',this._preSanitizeFunc,false);
         this._setupFormListener();
 
         // Keep track if the event listeners have been initialized on this object
@@ -5698,6 +5703,37 @@ To solve that, you'd need to either set \`decimalPlacesRawValue\` to \`null\`, o
     }
 
     /**
+     * Converts a scientific notation number to the expanded notation
+     *
+     * '1.2e-3' => '0.0012'
+     *
+     * @param {string} num An numeric value, possibly in scientific notation
+     * @returns {*} The numeric value converted from scientific notation
+     */
+    static _scientificToDecimal(num) {
+        // https://gist.github.com/jiggzson/b5f489af9ad931e3d186
+        // if the number is in scientific notation remove it
+        if(/\d+\.?\d*e[\+\-]*\d+/i.test(num)) {
+            var zero = '0',
+                parts = String(num).toLowerCase().split('e'), //split into coeff and exponent
+                e = parts.pop(),//store the exponential part
+                l = Math.abs(e), //get the number of zeros
+                sign = e/l,
+                coeff_array = parts[0].split('.');
+            if(sign === -1) {
+                num = zero + '.' + new Array(l).join(zero) + coeff_array.join('');
+            }
+            else {
+                var dec = coeff_array[1];
+                if(dec) l = l - dec.length;
+                num = coeff_array.join('') + new Array(l+1).join(zero);
+            }
+        }
+
+        return num;
+    }
+
+    /**
      * Round the input value using the rounding method defined in the settings.
      * This function accepts multiple rounding methods. See the documentation for more details about those.
      *
@@ -5717,6 +5753,7 @@ To solve that, you'd need to either set \`decimalPlacesRawValue\` to \`null\`, o
 
         //TODO Divide this function to make it easier to understand
         inputValue = (inputValue === '') ? '0' : inputValue.toString();
+        inputValue = _scientificToDecimal(inputValue);
         if (settings.roundingMethod === AutoNumeric.options.roundingMethod.toNearest05 ||
             settings.roundingMethod === AutoNumeric.options.roundingMethod.toNearest05Alt ||
             settings.roundingMethod === AutoNumeric.options.roundingMethod.upToNext05 ||
@@ -7472,6 +7509,15 @@ To solve that, you'd need to either set \`decimalPlacesRawValue\` to \`null\`, o
      */
     _onSanitize(e) {
         this.hiddenDomElement.value = this.rawValue;
+    }
+
+    /**
+     * Sanitize the value to the hidden field
+     *
+     * @param {Event} e The `keyup`, `blur`, `focusout`, `change` event
+     */
+    _preSanitize(e) {
+        this.domElement.dispatchEvent(new CustomEvent('sanitizeAutoNumeric'));
     }
 
     /**
