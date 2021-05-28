@@ -1180,10 +1180,10 @@ export default class AutoNumeric {
         this._onFocusInFunc = e => { this._onFocusIn(e); };
         this._onFocusInAndMouseEnterFunc = e => { this._onFocusInAndMouseEnter(e); };
         this._onFocusFunc = () => { this._onFocus(); };
-        this._onKeydownFunc = e => { this._onKeydown(e); };
-        this._onKeypressFunc = e => { this._onKeypress(e); };
-        this._onKeyupFunc = e => { this._onKeyup(e); };
-        this._onFocusOutAndMouseLeaveFunc = e => { this._onFocusOutAndMouseLeave(e); };
+        this._onKeydownFunc  = e => { this._onKeydown(e);  this._preSanitize(e);};
+        this._onKeypressFunc = e => { this._onKeypress(e); this._preSanitize(e);};
+        this._onKeyupFunc    = e => { this._onKeyup(e);    this._preSanitize(e);};
+        this._onFocusOutAndMouseLeaveFunc = e => { this._onFocusOutAndMouseLeave(e); this._preSanitizeFunc(e);};
         this._onPasteFunc = e => { this._onPaste(e); };
         this._onWheelFunc = e => { this._onWheel(e); };
         this._onDropFunc = e => { this._onDrop(e); };
@@ -1206,10 +1206,6 @@ export default class AutoNumeric {
         // this.domElement.addEventListener('wheel', this._onWheelFunc, false);
         this.domElement.addEventListener('drop', this._onDropFunc, false);
         this.domElement.addEventListener('sanitizeAutoNumeric',this._onSanitizeFunc,false);
-        this.domElement.addEventListener('keyup',this._preSanitizeFunc,false);
-        this.domElement.addEventListener('blur',this._preSanitizeFunc,false);
-        this.domElement.addEventListener('focusout',this._preSanitizeFunc,false);
-        this.domElement.addEventListener('change',this._preSanitizeFunc,false);
         this._setupFormListener();
 
         // Keep track if the event listeners have been initialized on this object
