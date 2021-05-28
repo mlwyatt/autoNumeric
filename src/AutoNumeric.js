@@ -105,6 +105,15 @@ export default class AutoNumeric {
         // Initialize the element
         this.domElement = domElement;
         this.hiddenDomElement = document.getElementById(`${domElement.id}_val`);
+        if (this.hiddenDomElement === null) {
+            const hiddenDomElement = document.createElement('input');
+            hiddenDomElement.type = 'hidden';
+            hiddenDomElement.id = `${domElement.id}_val`;
+            hiddenDomElement.name = domElement.name;
+            hiddenDomElement.value = this.rawValue;
+            this.domElement.insertAdjacentElement('afterend',hiddenDomElement); // insert after
+            this.hiddenDomElement = hiddenDomElement;
+        }
         domElement._autoNumeric = this;
 
         // Generate the settings
@@ -6565,6 +6574,10 @@ To solve that, you'd need to either set \`decimalPlacesRawValue\` to \`null\`, o
      * @param {KeyboardEvent} e
      */
     _onKeydown(e) {
+        if (e.key === 'Enter') {
+            return;
+        }
+
         this.formatted = false; // Keep track if the element has been formatted already. If that's the case, prevent further format calculations.
         this.isEditing = true; // Keep track if the user is currently editing the element manually
 
@@ -7050,6 +7063,9 @@ To solve that, you'd need to either set \`decimalPlacesRawValue\` to \`null\`, o
         }
 
         let rawPastedText;
+        if (typeof e.clipboardData === 'undefined') { // e doesn't have clipboardData but e.originalEvent does
+            e.clipboardData = e.originalEvent.clipboardData;
+        }
         if (window.clipboardData && window.clipboardData.getData) {
             // Special case for the obsolete and non-standard IE browsers 10 and 11
             rawPastedText = window.clipboardData.getData('Text');

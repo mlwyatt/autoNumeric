@@ -86,7 +86,7 @@ AutoNumeric.defaultSettings = {
     serializeSpaces              : AutoNumeric.options.serializeSpaces.plus,
     showOnlyNumbersOnFocus       : AutoNumeric.options.showOnlyNumbersOnFocus.showAll,
     showPositiveSign             : AutoNumeric.options.showPositiveSign.hide,
-    showWarnings                 : AutoNumeric.options.showWarnings.show,
+    showWarnings                 : AutoNumeric.options.showWarnings.hide,
     styleRules                   : AutoNumeric.options.styleRules.none,
     suffixText                   : AutoNumeric.options.suffixText.none,
     symbolWhenUnfocused          : AutoNumeric.options.symbolWhenUnfocused.none,
