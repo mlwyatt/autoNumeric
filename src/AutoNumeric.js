@@ -104,6 +104,8 @@ export default class AutoNumeric {
 
         // Initialize the element
         this.domElement = domElement;
+        this.hiddenDomElement = document.getElementById(`${domElement.id}_val`);
+        domElement._autoNumeric = this;
 
         // Generate the settings
         this.defaultRawValue = ''; // The default raw value to set when initializing an AutoNumeric object
@@ -1178,20 +1180,22 @@ export default class AutoNumeric {
         this._onDropFunc = e => { this._onDrop(e); };
         this._onKeydownGlobalFunc = e => { this._onKeydownGlobal(e); };
         this._onKeyupGlobalFunc = e => { this._onKeyupGlobal(e); };
+        this._onSanitizeFunc = e => { this._onSanitize(e); };
 
         // Add the event listeners
         this.domElement.addEventListener('focusin', this._onFocusInFunc, false);
         this.domElement.addEventListener('focus', this._onFocusInAndMouseEnterFunc, false);
         this.domElement.addEventListener('focus', this._onFocusFunc, false);
-        this.domElement.addEventListener('mouseenter', this._onFocusInAndMouseEnterFunc, false);
+        // this.domElement.addEventListener('mouseenter', this._onFocusInAndMouseEnterFunc, false);
         this.domElement.addEventListener('keydown', this._onKeydownFunc, false);
         this.domElement.addEventListener('keypress', this._onKeypressFunc, false);
         this.domElement.addEventListener('keyup', this._onKeyupFunc, false);
         this.domElement.addEventListener('blur', this._onFocusOutAndMouseLeaveFunc, false);
-        this.domElement.addEventListener('mouseleave', this._onFocusOutAndMouseLeaveFunc, false);
+        // this.domElement.addEventListener('mouseleave', this._onFocusOutAndMouseLeaveFunc, false);
         this.domElement.addEventListener('paste', this._onPasteFunc, false);
-        this.domElement.addEventListener('wheel', this._onWheelFunc, false);
+        // this.domElement.addEventListener('wheel', this._onWheelFunc, false);
         this.domElement.addEventListener('drop', this._onDropFunc, false);
+        this.domElement.addEventListener('sanitizeAutoNumeric',this._onSanitizeFunc,false);
         this._setupFormListener();
 
         // Keep track if the event listeners have been initialized on this object
@@ -1266,14 +1270,8 @@ export default class AutoNumeric {
                 // If not, add the counter
                 this._initializeFormCounterToOne();
                 // And add the submit and reset event listeners
-                if (typeof window.$ === 'function' && window.$.fn && window.$.fn.jquery && typeof window.$.fn.jquery === 'string') {
-                    $(this.parentForm).on('submit',this._onFormSubmitFunc);
-                    $(this.parentForm).on('reset',this._onFormResetFunct);
-                }
-                else {
-                    this.parentForm.addEventListener('submit', this._onFormSubmitFunc, false);
-                    this.parentForm.addEventListener('reset', this._onFormResetFunc, false);
-                }
+                this.parentForm.addEventListener('submit', this._onFormSubmitFunc, false);
+                this.parentForm.addEventListener('reset', this._onFormResetFunc, false);
                 // Also keep a reference to the handler function so that we can remove it later
                 this._storeFormHandlerFunction();
             }
@@ -7465,6 +7463,15 @@ To solve that, you'd need to either set \`decimalPlacesRawValue\` to \`null\`, o
                 AutoNumericHelper.throwError('Unknown `wheelOn` option.');
             }
         }
+    }
+
+    /**
+     * Sanitize the value to the hidden field
+     *
+     * @param {Event} e The `sanitizeAutoNumeric` event
+     */
+    _onSanitize(e) {
+        this.hiddenDomElement.value = this.rawValue;
     }
 
     /**
