@@ -110,7 +110,7 @@ export default class AutoNumeric {
             hiddenDomElement.type = 'hidden';
             hiddenDomElement.id = `${domElement.id}_val`;
             hiddenDomElement.name = domElement.name;
-            hiddenDomElement.value = this.rawValue;
+            hiddenDomElement.value = domElement.value;
             this.domElement.insertAdjacentElement('afterend',hiddenDomElement); // insert after
             this.hiddenDomElement = hiddenDomElement;
         }
